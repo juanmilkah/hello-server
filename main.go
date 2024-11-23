@@ -1,11 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 )
+
+type Path struct {
+  URLPath string;
+}
 
 func main(){
   http.HandleFunc("/", HandleHomeRoute)
@@ -20,12 +24,20 @@ func main(){
 }
 
 func HandleHomeRoute(w http.ResponseWriter, r *http.Request){
-  paths := [...]string{"/","/hello"}
-  joinedPaths := strings.Join(paths[:], ", ")
-  
+ 
+  paths := map[string]Path{
+    "Home":{
+      URLPath: "/",
+    },
+    "Hello":
+    {
+      URLPath: "/hello",
+    },
+  }
+
   w.Header().Set("Content-Type", "text/plain")
   w.WriteHeader(http.StatusOK)
-  w.Write([]byte(joinedPaths))
+  json.NewEncoder(w).Encode(paths)
 }
 
 func HandleHello(w http.ResponseWriter, r *http.Request){
